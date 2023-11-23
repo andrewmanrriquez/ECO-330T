@@ -1,0 +1,233 @@
+---
+title: "Problem Set 3"
+author: "Andrew Manrriquez"
+date: "2023-10-03"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+# Loading tidyverse package
+library(tidyverse)
+# Loading dplyr package
+library(dplyr)
+# Loading fixest package
+library(fixest)
+```
+
+# [**Section 1**]{.underline}
+
+## Question 1
+
+### a.
+
+𝛽~0~ is the intercept term and represents the predicted number of EV charging stations that are passed when she does not drive. Based on the information I expect to find 𝛽~0~ to be equal to 0 EV charging stations.
+
+### b.
+
+𝛽~1~ is the coefficient for the variable representing the number of miles driven (i.e. it is the slope). It essentially represents the expected change in the number of EV charging stations passed for each one-unit change in miles driven. Based on the information we can expect 𝛽~1~ to be 0.4.
+
+3 EV charging stations / 7.5 miles = 0.4
+
+### c.
+
+EV~1~ = 𝛽~0~ + 𝛽~1~ miles~i~ + e~i~ ---\> 0 + 0.4(5) = 2
+
+e~1~ = 0-2 = -2
+
+EV~1~ is calculated to be 2 EV charging stations passed on her first driving trip. e~1~ is calculated to be -2.
+
+### d.
+
+EV~N~ = 𝛽~0~ + 𝛽~1~ miles~i~ ---\> 0 + 0.4(2.5) = 1
+
+e~N~ = 2-1 = 1
+
+EV~N~ is calculated to be 1 EV charging stations predicted to have been passed. E~N~ is calculated to be 1 due to the observed value being 2 and the predicted value being 1.
+
+## Question 2
+
+### a.
+
+The constant is 2,500,000 metric tons of CO~2~ emissions, which represents the amount of CO~2~ emissions when there are zero gas-driven cars in the city. The slope is 4.6 which represents the estimated increase in CO~2~ emissions for every gas-driven car.
+
+### b.
+
+2,546,000 = 2,500,000 + 4.6 \* GasCars~i~
+
+GasCars~i~ = (2,546,000 - 2,500,000) / 4.6 = 10,000
+
+10,000 gas cars would give a prediction of 2,546,000 million metric tons of CO~2~ emissions.
+
+### c.
+
+500,000 / 4.6 = 108,695.652
+
+To increase the predicted CO~2~ emissions by 500,000 there would need to be about 108,696 (rounded from 108,695.652) additional gas driven cars.
+
+### d.
+
+Three additional variables that would be included in the error term of this regression may include: weather conditions (temperature, humidity), government policies/regulations, and socioeconomic factors (income, population density)
+
+### e.
+
+To interpret the slope coefficient as the causal effect of an addition gas car on a city's total CO~2~ emissions, all the other variables that could impact CO~2~ emissions are held constant. In this scenario, the assumption is not reasonable due to there being multiple variables that could impact CO~2~ emissions that are not mentioned in this regression model.
+
+## Question 3
+
+### a.
+
+y~i~ - variable
+
+x~i~ - variable
+
+z~i~ - variable
+
+𝛽~0~ - coefficient
+
+𝛽~1~ - coefficient
+
+𝛽~2~ - coefficient
+
+### b.
+
+𝛽~0~ is the intercept and represents the number of electric vehicles sold and the units would be number of electric vehicles.
+
+𝛽~1~ is the slope "coefficient" on x~i~ and the units would be the change in number of electric vehicles, y~i~ , per unit change in x~i~ , electricity price.
+
+𝛽~2~ is the slope "coefficient" on z~i~ and the units would be the change in number of electric vehicles, y~i~ , per unit change in z~i~ , gasoline price
+
+### c.
+
+The sign for 𝛽~1~ would depend on if higher electricity prices encouraged or discouraged the electric vehicle purchases. If higher electricity prices discourage the purchase of electric vehicles than we could expect 𝛽~1~ to be negative. The sign for 𝛽~2~ would depend on the relationship between gasoline prices and electric vehicle sales. if higher gasoline prices encourage electric vehicle sales then 𝛽~2~ would be positive.
+
+### d.
+
+Three variables that might impact the error term in this regression include: consumer preferences towards electric vehicles, governmental policies that might promote electric vehicle sales, and the availability of a charging infrastructure.
+
+### e.
+
+In this scenario we cannot interpret 𝛽~1~ as the causal effect because there are numerous variables that could influence both the independent and dependent variables. If we were able to control for those variables then we would have a better opportunity to evaluate whether or not 𝛽~1~ has a causal effect.
+
+# [**Section 2**]{.underline}
+
+## Question 1
+
+### a.
+
+```{r}
+# Reading in car data from 2010
+car_2010 = read.csv("Data/car_data_2010.csv")
+# Reading in cara data from 2022
+car_2022 = read.csv("Data/car_data_2022.csv")
+
+# Scatter plot for 2010 data
+car_2010 %>% ggplot(aes(x = Weight, y = CO2)) + 
+        geom_point() + 
+        geom_smooth(method = "lm", se = FALSE) + 
+        labs(title = "CO2 Emissions Rates vs Weight (2010)")
+
+# Scatter plot for 2022 data
+car_2022 %>% ggplot(aes(x = Weight, y = CO2)) + 
+        geom_point() + 
+        geom_smooth(method = "lm", se = FALSE) + 
+        labs(title = "CO2 Emissions Rates vs Weight (2022)")
+
+```
+
+In both 2010 and 2022 there appears to be a positive relationship between a vehicle's weight and its CO~2~ emissions rate. The 2022 data set appears to have more vehicles clustered in the 3000 to 4000 range for weight as opposed to the 2010 data set. The 2022 data set also appears to have a steeper slope than 2010.
+
+### b.
+
+```{r}
+# Scatter plot for 2010 data weight and MPG
+car_2010 %>% ggplot(aes(x = Weight, y = MPG)) + 
+        geom_point() + 
+        geom_smooth(method = "lm", se = FALSE) + 
+        labs(title = "MPG vs Weight (2010)")
+
+# Scatter plot for 2022 data weight and MPG
+car_2022 %>% ggplot(aes(x = Weight, y = MPG)) + 
+        geom_point() + 
+        geom_smooth(method = "lm", se = FALSE) + 
+        labs(title = "MPG vs Weight (2022)")
+```
+
+In both 2010 and 2022 there appears to be a negative correlation between MPG and weight. The negative correlation between MPG and weight in 2022 appears to be steeper than that of 2010.
+
+## Question 2
+
+### a.
+
+```{r}
+# Estimating the OLS regression
+feols(CO2 ~ Weight,data = car_2010)
+```
+
+After estimating the OLS regression, we see that the intercept is around 19.047306 and the slope is 0.077195. The intercept indicates that there is an estimated 19.047306 CO2 emissions rate when weight is 0 and the slope indicates that there is a 0.077195 change in CO2 emissions rate for each additional unit of weight.
+
+### b.
+
+```{r}
+# Estimating the OLS regression
+feols(MPG ~ Weight,data = car_2010)
+```
+
+After estimating the OLS regression, we see that the intercept is around 54.624545 and the slope is -0.006203. The intercept indicates that there is an estimated MPG of 54.624545 when weight is 0 and the slope indicates that there is a -0.006203 change in MPG for each additional unit of weight.
+
+### c.
+
+```{r}
+# Estimating the OLS regression
+feols(CO2 ~ Weight,data = car_2022)
+```
+
+After estimating the OLS regression, we see that the intercept is around -0.810971 and the slope is 0.068557. The intercept indicates that there is an estimated -0.810971 CO2 emissions rate when weight is 0 and the slope indicates that there is a 0.068557 change in CO2 emissions rate for each additional unit of weight.
+
+### d.
+
+```{r}
+# Estimating the OLS regression
+feols(MPG ~ Weight,data = car_2022)
+```
+
+After estimating the OLS regression, we see that the intercept is around 63.829230 and the slope is -0.006986. The intercept indicates that there is an estimated MPG of 63.829230 when weight is 0 and the slope indicates that there is a -0.006986 change in MPG for each additional unit of weight.
+
+### e.
+
+```{r}
+# Re-estimate regression from 2C. with horsepower
+feols(CO2 ~ Weight + Horsepower,data = car_2022)
+```
+
+The intercept is 32.470937 and represents the predicted CO2 emissions rate when weight and horsepower are zero. The slope for weight is 0.033603 and represents the change in CO2 emissions rate for every one unit increase in weight, while holding horsepower constant. The slope for horsepower is 0.383523 and represents the change in CO2 emissions rate for every one unit increase in horsepower, while holding weight constant.
+
+### f.
+
+```{r}
+# Re-estimate regression from 2D with horsepower
+feols(MPG ~ Weight + Horsepower,data = car_2022)
+```
+
+The intercept is 61.209206 and represents the predicted MPG when weight and horsepower are zero. The slope for weight is -0.004235 and represents the change in MPG for every one unit increase in weight, while holding horsepower constant. The slope for horsepower is -0.030192 (rounded) and represents the change in MPG for every one unit increase in horsepower, while holding weight constant.
+
+### g.
+
+The slope for weight in relation to MPG in 2010 is -0.006203 and for 2022 it is -0.006986. Based on these numbers we can see that the slope for 2022 is more negative which suggest that weight has a greater impact on MPG in 2022 than it did 2010. According to the regression lighter vehicles have become more fuel efficient in 2022.
+
+## Question 3
+
+### a.
+
+```{r}
+# Calculate the average weight for vehicle fleet in 2010
+mean(car_2010$Weight)
+
+# Calculate the average weight for vehicle fleet in 2022
+mean(car_2022$Weight)
+```
+
+The average weight for 2010 was 4307.705 and for 2022 it was 4515.252. Based on the calculations the U.S. vehicle fleet has become heavier on average over time.
+
+### b.
+
+Since the average weight of vehicles as increased over time, this suggest that automakers may have focused on producing heavier vehicles. The production of heavier cars may have been encouraged due to larger vehicles having less stringent fuel economy standards. With the switch to footprint-based standards in 2011, there may have been a few unintended environmental consequences such as: encouragement of larger vehicle production, reduced incentives for compact vehicle production, and may lead to higher emission rates.

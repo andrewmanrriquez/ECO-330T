@@ -1,0 +1,148 @@
+---
+title: "Problem Set 5"
+author: "Andrew Manrriquez"
+date: "2023-11-01"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+# Loading tidyverse package
+library(tidyverse)
+# Loading dplyr package
+library(dplyr)
+```
+
+## Question 1
+
+### a.
+
+```{r}
+# Loading in NBP data set
+NBP <- read.csv("Data/nbp_data.csv")
+
+# Mean level of NOx for top left
+top_left <- NBP %>% filter(treated == 1 & post == 0) %>% summarise(mean(nox_emit))
+print(top_left)
+
+# Mean level of NOx for top right
+top_right <- NBP %>% filter(treated == 1 & post == 1) %>% summarise(mean(nox_emit))
+print(top_right)
+
+# Mean level of NOx for bottom left
+bottom_left <- NBP %>% filter(treated == 0 & post == 0) %>% summarise(mean(nox_emit))
+print(bottom_left)
+
+# Mean level of NOx for bottom right
+bottom_right <- NBP %>% filter(treated == 0 & post == 1) %>% summarise(mean(nox_emit))
+print(bottom_right)
+```
+
++---------------------------+-------------------------------+-------------------------------+
+|                           | Pre-NBP Policy                | Post-NBP Policy               |
+|                           |                               |                               |
+|                           | (Year \< 2003)                | (Year \> 2002)                |
++===========================+===============================+===============================+
+| Summer (Treated == 1)     | 1.013727 thousands of pounds  | 0.4804936 thousands of pounds |
++---------------------------+-------------------------------+-------------------------------+
+| Non-Summer (Treated == 0) | 0.9764006 thousands of pounds | 0.7551173 thousands of pounds |
++---------------------------+-------------------------------+-------------------------------+
+
+### b.
+
+```{r}
+# Calculate difference in average NOx emissions in post policy summer and non summer
+Diff_NOX_Post <- top_right - bottom_right
+print(Diff_NOX_Post)
+```
+
+The difference in average NOx emissions in summer months compared to non-summer months after the NBP policy was in effect is -0.2746237 thousands of pounds.
+
+### c.
+
+Comparing the average NOx emissions between summer and non-summer months after 2002 might not be a valid method to gauge the impact of the NBP on emission reductions because other factors such as weather conditions and economic changes can have an impact.
+
+### d.
+
+```{r}
+# Calculate the difference in average NOx emissions for summer months before and after the policy
+Diff_smr_pre_post <- top_left - top_right
+print(Diff_smr_pre_post)
+```
+
+The difference in average NOx emissions before and after the NBP policy in summer months is 0.5332338 thousands of pounds.
+
+### e.
+Potential issues that might arise when comparing the average summer NOx emissions in NBP regulated states between these two years may include: The NBP's impact may not be immediate and there may be a time lag in emissions reductions and the absence of a control group makes it difficult to isolate the NBP's impact from other variables, there may also be a selection bias. 
+
+## Question 2
+
+### a.
+```{r}
+# Calculate difference in difference
+DiD <- (top_right - top_left) - (bottom_right - bottom_left)
+print(DiD)
+```
+The difference in difference estimates is -0.3119505 thousands of pounds.
+
+### b.
+```{r}
+# Load library for fixed regression
+library(fixest)
+
+# Estimate DiD regression model
+feols(nox_emit ~ treated + post + treatedXpost, data = NBP)
+```
+
+### c.
+The intercept coefficient represents the baseline level of NOx emissions in the non summer before the NBP policy and it suggests that the average NOx emissions, at the baseline, are 0.976401 thousands of pounds. The treated coefficient indicates the average difference in NOx emissions between the summer and non summer before the NBP policy. It suggests that before the policy the summer months had an average of 0.037327 thousands of pounds more NOx emissions than non summer months. The post coefficient represents the average change in NOx emissions in the non summer after the NBP policy. It suggests that after the policy the non summer months experienced a reduction on average of 0.221283 thousand of pounds of NOx emissions. The treatedXpost coefficient represents the additional change in NOx emissions in the summer months after the NBP policy. It suggests that in the summmer months after the NBP policy there was a reduction of 0.311951 in NOx emissions. 
+
+### d.
+The intercept, post variable and treatedXpost variable are statistically significant. 
+
+### e.
+The coefficient for treatedXpost is statistically significant and negative which suggests that the NBP policy had a significant impact on the NOx emissions during summer months in NBP regulated states. It also indicates that the NBP program effectively reduced NOx emissions. 
+
+### f.
+```{r}
+NBP |>
+dplyr::group_by(year, treated) |> dplyr::summarise(
+nox_emit = mean(nox_emit),
+.groups = "drop" )|>
+ggplot(aes(x = year, y = nox_emit, color = factor(treated))) + geom_line() +
+geom_vline(
+xintercept = 2002, linetype = "dashed",
+color = "red", linewidth = 1 )+
+scale_x_continuous(breaks = seq(1997, 2007, 1)) +
+labs(title = "Time Series Plot of NOx Emissions", x = "Year", y = "NOx Emissions", color = "Season") +
+annotate("text",
+x=2002,y=2,
+size = 7,
+label = "NBP Policy Takes Effect", vjust = -1
+)
+
+```
+
+
+## Question 3
+
+### a.
+```{r}
+# Estimate DiD regression model for high Ozone days
+feols(high_ozone_days ~ treated + post + treatedXpost, data = NBP)
+```
+
+### b.
+The interaction term or the treatedXpost term shows the additional change in high ozone days in the summer after the NBP policy. The coeffecient suggests that in the summer months of NBP regulated states there was an average reduction of 13.78712 high ozone days. The treatedXpost is statistically significant meaning that the NBP program reduced the number of high ozone days during the summer months.
+
+## Question 4
+
+### a.
+```{r}
+# Estimate a regression of NOx on treatedXpost
+fixed_effects <- feols(nox_emit ~ treatedXpost + factor(state) + factor(year), data = NBP)
+
+# Extract estimate
+effect_estimate <- fixed_effects$coefficients["treatedXpost"]
+print(effect_estimate)
+```
+The estimate of the effect of the NBP policy on emissions from the generalized difference in difference regression with state and year fixed is approximately -0.2746237 thousand of pounds.. This suggests that the NBP policy is asociated with a reduction in NOx emissions. The estimate in 2b and in 4a both have reductions in emissions but the reduction in 2b is greater at -0.311951 thousand of pounds.

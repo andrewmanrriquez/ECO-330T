@@ -1,0 +1,48 @@
+---
+title: "Problem Set 4"
+author: "Andrew Manrriquez"
+date: "2023-10-19"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+# Loading tidyverse package
+library(tidyverse)
+# Loading dplyr package
+library(dplyr)
+```
+
+## Question 1
+
+### a.
+
+We would expect 𝛽~1~ to be positive at the beginning. This would be an indicator that low levels of income, economic development leads to an environmental degradation. We would also expect 𝛽~2~ to be negative because at a certain threshold, as income increases the coeffecient should reflect the decreasing environmental degradation. 
+
+### b.
+
+The coefficient estimate for 𝛽~1~ is 2.2 which indicates that a 1% increase in the natural logarithm of GDP per capita is associated with a 2.2% increase in the natural logarathim of air particulate population.
+
+### c.
+
+The coefficient estimate for 𝛽~1~ is 0.002 which indicates that a 1% increase in the natural logarithm of GDP per capita is associated with a 0.002% increase in the natural logarithm of air particulate polluiton. 
+
+### d.
+
+According to the table the constant coefficient (𝛽~0~) and population constant (𝛽~2~) are statistically significant. This is determined by both of their p-values being less than 0.05. 
+
+## Question 2
+
+### a.
+
+𝛽~0~ in this regression represents the intercept, which is the expected number of elephants poached when a ranger has zero years of experience and has not attended the special enforcement training program. 
+
+### b.
+
+For 𝛽~1~ the sign would be negative. This is an indicator that as a ranger gains more experience, they become more effective at reducing poaching. For 𝛽~2~ the sign would be negative as well. This indicates that rangers who have attended the training program are effective at reducing poaching. For 𝛽~3~ the sign would be positive. This shows that the impact of training is more pronounced for less experienced rangers. This essentially means that the training program has a stronger positive effect on reducing poaching. 
+
+### c.
+
+Given these estimates the equation for the impact of of attending the enforcement training program on poaching is Impact of Training = 𝛽~2~ + 𝛽~3~ * experience ~i~
+After substituting the values into the equation it is
+Impact of training = -15 + 2 * experience ~i~
+After solving for experience ~i~ we get 7.5. Which means that when a ranger has about 7.5 years of experience the training program has zero effect on the number of elephants poached. 
